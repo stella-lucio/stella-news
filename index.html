@@ -184,8 +184,10 @@ a{color:var(--green)}
 <div class="toast" id="toast" hidden></div>
 
 <script>
-fetch('issues.json?v=' + Date.now(), { cache: 'no-store' })
-  .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+function getJSON(u){ return fetch(u, { cache: 'no-store' }).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }); }
+// 저장소 최신본을 먼저 읽어서 GitHub Pages 배포가 늦어도 새 호가 바로 보이게 한다
+getJSON('https://raw.githubusercontent.com/stella-lucio/stella-news/main/issues.json?v=' + Date.now())
+  .catch(function(){ return getJSON('issues.json?v=' + Date.now()); })
   .then(start)
   .catch(function(){ document.getElementById('paper').innerHTML = '<p>신문을 불러오지 못했어요. 인터넷 연결을 확인하고 새로고침해 주세요.</p>'; });
 function start(issues){
